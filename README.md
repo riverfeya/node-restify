@@ -31,15 +31,15 @@
 [![devDependency Status](https://david-dm.org/restify/node-restify/dev-status.svg)](https://david-dm.org/restify/node-restify#info=devDependencies)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-[restify](http://restify.com) is a framework, utilizing
-[connect](https://github.com/senchalabs/connect) style middleware for building
-REST APIs.  For full details, see http://restify.com
+[restify](http://restify.com) это фреймворк, для создания
+[connect](https://github.com/senchalabs/connect) промежуточного ПО для
+REST APIs.  Детальнее, см http://restify.com
 
 Follow restify on [![alt text][1.2]][1]
 
-# Usage
+# Использование
 
-## Server
+## Сервер
 ```javascript
 var restify = require('restify');
 
@@ -62,7 +62,7 @@ server.listen(8080, function () {
 });
 ```
 
-## Client
+## Клиент
 ```javascript
 var assert = require('assert');
 var clients = require('restify-clients');
@@ -78,14 +78,14 @@ client.get('/echo/mark', function (err, req, res, obj) {
 });
 ```
 
-# Installation
+# Установка
 ```bash
 $ npm install restify
 ```
 
-## Supported Node Versions
+## ПОддерживаемые Node версии
 
-Restify aims to support the Node.js LTS (Active and Maintenance) versions along with Node.js current stable version.
+Restify стремится поддержать Node.js LTS (Active and Maintenance) версии вместе с текущей стабильной версией Node.js.
 
 | Node Release  | Supported in Current Version | Notes    |
 | :--:     | :---: | :---:       | 
@@ -95,7 +95,7 @@ Restify aims to support the Node.js LTS (Active and Maintenance) versions along 
 | 6.x  | **No** | Use restify v7.x, team will backport critical issues only   | 
 | 4.x  | **No** | Use restify v7.x, team will backport critical issues only  | 
 
-## License
+## Лицензия
 
 The MIT License (MIT)
 
