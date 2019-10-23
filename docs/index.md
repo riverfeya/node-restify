@@ -4,7 +4,7 @@ permalink: /docs/home/
 redirect_from: /docs/
 ---
 
-Setting up a server is quick and easy. Here is a barebones echo server:
+Настроить сервер быстро и легко. Вот простой эхо-сервер:
 
 ```js
 var restify = require('restify');
@@ -23,9 +23,8 @@ server.listen(8080, function() {
 });
 ```
 
-Try hitting that with the following curl commands to get a feel for what
-restify is going to turn that into:
-
+Попробуйте выполнить это с помощью следующих команд curl, чтобы увидеть,
+что Restify превратит это в
 ```sh
 $ curl -is http://localhost:8080/hello/mark -H 'accept: text/plain'
 HTTP/1.1 200 OK
@@ -55,23 +54,23 @@ Date: Mon, 31 Dec 2012 01:42:07 GMT
 Connection: close
 ```
 
-Note that by default, curl uses `Connection: keep-alive`. In order to make the
-HEAD method return right away, you'll need to pass `Connection: close`.
+ЗАметьте, что по-умолчанию, curl использует `Connection: keep-alive`. Чтобы
+HEAD method возвращался правильно, вам нужно передать `Connection: close`.
 
-Since curl is often used with REST APIs, restify's plugins include a plugin to
-work around this idiosyncrasy in curl. The plugin checks whether the user agent
-is curl. If it is, it sets the Connection header to "close" and removes the
+Поскольку curl часто используется с REST APIs, Плагины Restify включают плагин для
+обойти эту особенность в curl. Плагин проверяет, является ли пользовательский агент
+is curl. Если это так, он устанавливает Connection header в "close" и удаляет
 "Content-Length" header.
 
 ```js
 server.pre(restify.plugins.pre.userAgentConnection());
 ```
 
-## Sinatra style handler chains
+## Цепи обработчика стиля Синатры
 
-Like many other Node.js based REST frameworks, restify leverages a Sinatra
-style syntax for defining routes and the function handlers that service those
-routes:
+Как и многие другие Node.js based REST frameworks, restify использует 
+стиль Синатры для определения маршрутов и обработчиков функций, 
+которые обслуживают эти маршруты:
 
 ```js
 server.get('/', function(req, res, next) {
@@ -91,36 +90,35 @@ server.post('/foo',
 );
 ```
 
-In a restify server, there are three distinct handler chains:
+На сервере restify есть три различных цепочки обработчиков:
 
-* `pre` - a handler chain executed prior to routing
-* `use` - a handler chain executed post routing
-* `{httpVerb}` - a handler chain executed specific to a route
+* `pre` - цепочка обработчиков, выполняемая до маршрутизации
+* `use` - цепочка обработчиков выполняется после маршрутизации
+* `{httpVerb}` - цепочка обработчиков, выполненная специально для маршрута
 
-All three handler chains accept either a single function, multiple functions,
-or an array of functions.
+Все три цепочки обработчиков принимают одну функцию, несколько функций, 
+или массив функций.
 
 
 ## Universal pre-handlers: server.pre()
 
-The `pre` handler chain is executed before routing. That means these handlers
-will execute for an incoming request even if it's for a route that you did not
-register. This can be useful for logging metrics or for cleaning up the
-incoming request before routing it.
+Цепочка обработчика `pre` выполняется перед маршрутизацией. Это означает, что эти обработчики
+будет выполняться для входящего запроса, даже если это маршрут, который вы не сделали регистр. 
+Это может быть полезно для регистрации метрик или для очистки входящего запроса перед его маршрутизацией.
 
 ```js
-// dedupe slashes in URL before routing
+// дедупликация косых черт в URL перед маршрутизацией
 server.pre(restify.plugins.pre.dedupeSlashes());
 ```
 
 
 ## Universal handlers: server.use()
 
-The `use` handler chains is executed after a route has been chosen to service
-the request. Function handlers that are attached via the `use()` method will be
-run for all routes. Since restify runs handlers in the order they are
-registered, make sure that all your `use()` calls happen before defining any
-routes.
+ `use` цепочки обработчиков выполняются после выбора маршрута для обслуживания
+запроса. Обработчики функций, которые подключены через `use()` метод будет
+запущен для всех роутов. Поскольку restify запускает обработчики в том порядке, в котором они
+зарегистрированы, убедитесь, что все ваши `use()` вызовы происходят до определения любого
+роута.
 
 ```js
 server.use(function(req, res, next) {
@@ -130,19 +128,19 @@ server.use(function(req, res, next) {
 ```
 
 
-## Using next()
+## Использование next()
 
-Upon completion of each function in the handler chain, you are responsible for
-calling `next()`. Calling `next()` will move to the next function in the chain.
+По завершении каждой функции в цепочке обработчиков, Вы несете ответственность за
+вызов `next()`. Вызов `next()` перейдет к следующей функции в цепочке.
 
-Unlike other REST frameworks, calling `res.send()` does not trigger `next()`
-automatically. In many applications, work can continue to happen after
-`res.send()`, so flushing the response is not synonymous with completion of a
-request.
+В отличие от других REST фреймворков, вызов `res.send()` не активирует `next()`
+автоматически. Во многих приложениях работа может продолжаться и после
+`res.send()`, поэтому очистка ответа не является синонимом завершения
+запроса.
 
-In the normal case, `next()` does not typically take any parameters. If for
-some reason you want to stop processing the request, you can call `next(false)`
-to stop processing the request:
+В обычном случае, `next()` обычно не принимает никаких параметров. Если по
+какой-то причине вы хотите прекратить обработку запроса, вы можете вызвать `next(false)`
+прекратить обработку запроса:
 
 ```js
 server.use([
@@ -159,11 +157,11 @@ server.use([
 ]);
 ```
 
-`next()` also accepts any object for which `instanceof Error` is true, which
-will cause restify to send that Error object as a response to the client. The
-status code for the response will be inferred from the Error object's
-`statusCode` property. If no `statusCode` is found, it will default to 500.
-So the snippet below will send a serialized error to the client with an http
+`next()` также принимает любой объект, для которого `instanceof Error` в true, который 
+заставит restify отправлять этот объект Error как ответ клиенту. 
+код состояния для ответа будет выведен из свойства `statusCode` объекта ошибки.
+ Если `statusCode` не найден, то по умолчанию будет 500.
+Таким образом, фрагмент ниже отправит сериализованную ошибку клиенту с http
 500:
 
 ```js
@@ -172,8 +170,8 @@ server.use(function(req, res, next) {
 });
 ```
 
-And this will send a 404, since the `NotFoundError` constructor provides a
-value of 404 for `statusCode`:
+А это пошлет 404, поскольку конструктор `NotFoundError` предоставляет
+значение 404 для `statusCode`:
 
 ```js
 server.use(function(req, res, next) {
@@ -181,8 +179,8 @@ server.use(function(req, res, next) {
 });
 ```
 
-Calling `res.send()` with an Error object produces similar results, with this
-snippet sending an http 500 with a serialized error the client:
+Вызов `res.send()` с объектом Error дает похожие результаты, с этим
+сниппетом отправка http 500 с сериализованной ошибкой клиента:
 
 ```js
 server.use(function(req, res, next) {
@@ -191,25 +189,23 @@ server.use(function(req, res, next) {
 });
 ```
 
-The difference between the two is that invoking `next()` with an Error object
-allows you to leverage the server's [event
-emitter](/components/server.md#errors). This enables you to handle all
-occurrences of an error type using a common handler. See the [error
-handling](#error handling) section for more details.
+Разница между ними заключается в том, что `next()` с объектом Error 
+позволяет использовать серверные [event emitter](/components/server.md#errors). 
+Это позволяет вам обрабатывать все вхождения типа ошибки с использованием общего обработчика. 
+См. раздел [errorhandling](#error handling) .
 
 
-Lastly, you can call `next.ifError(err)` with an Error object to cause restify
-to throw, bringing down the process. This can be useful if you an Error is
-surfaced that cannot be handled, requiring you to kill the process.
+Наконец, вы можете вызвать `next.ifError(err)` с объектом Error to cause restify
+to throw, bringing down the process. Это может быть полезно, если Error 
+всплыла но не может быть обработана, требуя от вас убить процесс.
 
 
-## Routing
+## Роутинг
 
-restify routing, in 'basic' mode, is pretty much identical to express/sinatra,
-in that HTTP verbs are used with a parameterized resource to determine what
-chain of handlers to run. Values associated with named placeholders are
-available in `req.params`. Those values will be URL-decoded before being
-passed to you.
+restify роутинг, в 'basic' режиме, в значительной степени идентична express/sinatra,
+в этом HTTP глаголы используются с параметризованным ресурсом для определения какая
+цепочка обработчиков запущена. Значения, связанные с именованными заполнителями:
+доступными в `req.params`. Эти значения будут декодированы до того, как будут переданы вам.
 
 ```js
 function send(req, res, next) {
@@ -230,7 +226,7 @@ server.del('hello/:name', function rm(req, res, next) {
 });
 ```
 
-You can also pass in a [RegExp](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/RegExp)
+Вы также можете пройти в [RegExp](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/RegExp)
 object and access the capture group with `req.params` (which will not
 be interpreted in any way):
 
@@ -243,18 +239,18 @@ server.get(/^\/([a-zA-Z0-9_\.~-]+)\/(.*)/, function(req, res, next) {
 });
 ```
 
-Here any request like:
+Здесь любой запрос вроде:
 
 ```sh
 $ curl localhost:8080/foo/my/cats/name/is/gandalf
 ```
 
-Would result in `req.params[0]` being `foo` and `req.params[1]` being
+Приведет к `req.params[0]` beявляющийсяing `foo` и `req.params[1]` являющийся
 `my/cats/name/is/gandalf`.
 
 
-Routes can be specified by any of the following http verbs - `del`, `get`,
-`head`, `opts`, `post`, `put`, and `patch`.
+Routes может быть указан любым из следующих http verbs - `del`, `get`,
+`head`, `opts`, `post`, `put`, и `patch`.
 
 
 ```js
@@ -273,8 +269,8 @@ server.get(
 
 ### Hypermedia
 
-If a parameterized route was defined with a string (not a regex), you can
-render it from other places in the server. This is useful to have HTTP
+Если параметризованный маршрут был определен строкой (не регулярное выражение), вы можете
+рендерить его из других мест на сервере. This is useful to have HTTP
 responses that link to other resources, without having to hardcode URLs
 throughout the codebase. Both path and query strings parameters get URL encoded
 appropriately.
